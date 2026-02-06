@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card card-blog">
+            <div class="card-header bg-success text-white py-3 text-center">
+                <h1 class="h5 fw-bold mb-0"><i class="bi bi-person-plus me-2"></i>Créer un compte</h1>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+
+                {{ form_errors(registrationForm) }}
+
+                {{ form_start(registrationForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                    {{ form_row(registrationForm.email, { label: 'Adresse e-mail', attr: { class: 'form-control', placeholder: 'vous@exemple.fr' } }) }}
+                    {{ form_row(registrationForm.firstName, { label: 'Prénom', attr: { class: 'form-control' } }) }}
+                    {{ form_row(registrationForm.lastName, { label: 'Nom', attr: { class: 'form-control' } }) }}
+                    {{ form_row(registrationForm.plainPassword, { label: 'Mot de passe', attr: { class: 'form-control' } }) }}
+                    <hr class="my-4">
+                    <button type="submit" class="btn btn-success w-100 py-2">
+                        <i class="bi bi-person-plus me-2"></i>S'inscrire
+                    </button>
+                {{ form_end(registrationForm) }}
+
+                <p class="text-center text-muted small mt-4 mb-0">
+                    Déjà un compte ? <a href="{{ path('app_login') }}" class="text-primary text-decoration-none fw-medium">Se connecter</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{# Macro pour un bouton Voir #}
+{% macro btnView(route, params = {}, text = 'Voir', size = 'sm') %}
+    <a href="{{ path(route, params) }}" class="btn btn-{{ size }} btn-outline-primary" title="{{ text }}">
+        <i class="bi bi-eye"></i> {{ text }}
+    </a>
+{% endmacro %}
+
+{# Macro pour un bouton Éditer #}
+{% macro btnEdit(route, params = {}, text = 'Éditer', size = 'sm') %}
+    <a href="{{ path(route, params) }}" class="btn btn-{{ size }} btn-outline-warning" title="{{ text }}">
+        <i class="bi bi-pencil"></i> {{ text }}
+    </a>
+{% endmacro %}
+
+{# Macro pour un bouton Supprimer #}
+{% macro btnDelete(route, params = {}, text = 'Supprimer', size = 'sm', confirmMessage = 'Êtes-vous sûr?') %}
+    <form action="{{ path(route, params) }}" method="POST" style="display:inline;">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" class="btn btn-{{ size }} btn-outline-danger" title="{{ text }}" onclick="return confirm('{{ confirmMessage }}')">
+            <i class="bi bi-trash"></i> {{ text }}
+        </button>
+    </form>
+{% endmacro %}
+
+{# Macro pour un bouton Créer #}
+{% macro btnCreate(route, params = {}, text = 'Créer', size = 'lg', icon = 'plus-circle') %}
+    <a href="{{ path(route, params) }}" class="btn btn-{{ size }} btn-success" title="{{ text }}">
+        <i class="bi bi-{{ icon }}"></i> {{ text }}
+    </a>
+{% endmacro %}
+
+{# Macro pour un bouton Retour #}
+{% macro btnBack(route, params = {}, text = 'Retour', size = 'md') %}
+    <a href="{{ path(route, params) }}" class="btn btn-{{ size }} btn-secondary" title="{{ text }}">
+        <i class="bi bi-arrow-left"></i> {{ text }}
+    </a>
+{% endmacro %}
+
+{# Macro pour un bouton Primary avec lien #}
+{% macro btnPrimaryLink(route, params = {}, text = 'Lien', size = 'lg', icon = 'arrow-right') %}
+    <a href="{{ path(route, params) }}" class="btn btn-{{ size }} btn-primary" title="{{ text }}">
+        <i class="bi bi-{{ icon }}"></i> {{ text }}
+    </a>
+{% endmacro %}
+
+{# Macro pour un bouton Primary (Valider, Sauvegarder, etc.) #}
+{% macro btnPrimary(text = 'Valider', size = 'lg', icon = 'check-circle', type = 'submit') %}
+    <button type="{{ type }}" class="btn btn-{{ size }} btn-primary">
+        <i class="bi bi-{{ icon }}"></i> {{ text }}
+    </button>
+{% endmacro %}
+
+{# Macro pour un bouton Annuler #}
+{% macro btnCancel(route, params = {}, text = 'Annuler', size = 'lg') %}
+    <a href="{{ path(route, params) }}" class="btn btn-{{ size }} btn-outline-secondary" title="{{ text }}">
+        <i class="bi bi-x-circle"></i> {{ text }}
+    </a>
+{% endmacro %}

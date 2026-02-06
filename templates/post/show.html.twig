@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/_macros.html.twig' as macros %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+        {% endfor %}
+
+        <nav aria-label="Fil d'Ariane" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('list_posts') }}">Articles</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ post.title|length > 40 ? post.title|slice(0, 40) ~ '…' : post.title }}</li>
+            </ol>
+        </nav>
+
+        <article class="card card-blog mb-4">
+            {% if post.picture is defined and post.picture %}
+                <img src="{{ post.picture }}" class="card-img-top" alt="{{ post.title }}" style="max-height: 360px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body p-4 p-md-5">
+                <h1 class="display-6 fw-bold mb-2">{{ post.title }}</h1>
+                <p class="text-muted small mb-4">
+                    <i class="bi bi-hash"></i> Article #{{ post.id }}
+                    {% if post.category is defined and post.category %}
+                        · <a href="{{ path('app_category_show', { id: post.category.id }) }}" class="text-muted text-decoration-none">{{ post.category.name }}</a>
+                    {% endif %}
+                </p>
+                <hr class="my-4">
+                <div class="article-content" style="line-height: 1.8; font-size: 1.05rem;">
+                    {{ post.content|nl2br }}
+                </div>
+                <hr class="my-4">
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('edit_post', { id: post.id }) }}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil me-1"></i> Modifier</a>
+                        <form action="{{ path('delete_post', { id: post.id }) }}" method="post" class="d-inline m-0" onsubmit="return confirm('Supprimer définitivement cet article ?');">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i> Supprimer</button>
+                        </form>
+                    {% endif %}
+                    <a href="{{ path('list_posts') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i> Retour à la liste</a>
+                </div>
+            </div>
+        </article>
+
+        <section class="card card-blog">
+            <div class="card-header bg-transparent border-bottom py-3">
+                <h2 class="h5 fw-bold mb-0"><i class="bi bi-chat-left-text me-2"></i>Commentaires <span class="badge bg-secondary rounded-pill">{{ commentsCount }}</span></h2>
+            </div>
+            <div class="card-body p-4">
+                {% for comment in comments %}
+                    <div class="d-flex gap-3 mb-4 pb-4 border-bottom border-light">
+                        <div class="flex-shrink-0 rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1">{{ comment.content }}</p>
+                            <small class="text-muted">{{ comment.author.firstName }} {{ comment.author.lastName }} · {{ comment.createdAt|date('d/m/Y à H:i') }}</small>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">Aucun commentaire pour le moment. Soyez le premier à réagir !</p>
+                {% endfor %}
+
+                {% if app.user %}
+                    <div class="mt-4 pt-3 border-top">
+                        <h3 class="h6 fw-bold mb-3"><i class="bi bi-chat-dots me-2"></i>Ajouter un commentaire</h3>
+                        {{ form_start(commentForm, { 'action': path('add_comment', { id: post.id }), 'method': 'POST', 'attr': { 'class': 'mb-0', 'novalidate': 'novalidate' } }) }}
+                            {{ form_widget(commentForm.content, { 'attr': { 'class': 'form-control mb-2' } }) }}
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-send me-1"></i> Publier</button>
+                        {{ form_end(commentForm) }}
+                        <p class="text-muted small mt-2 mb-0">Votre commentaire sera visible après validation par un administrateur.</p>
+                    </div>
+                {% else %}
+                    <p class="text-muted mt-4 mb-0 pt-3 border-top">
+                        <a href="{{ path('app_login') }}" class="text-primary text-decoration-none">Connectez-vous</a> pour ajouter un commentaire.
+                    </p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

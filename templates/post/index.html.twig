@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/_macros.html.twig' as macros %}
+
+{% block title %}Accueil - Blog{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row align-items-center justify-content-center" style="min-height: 600px;">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-4 fw-bold mb-4">📝 Bienvenue sur notre Blog</h1>
+            <p class="lead text-muted mb-5">Découvrez nos derniers articles et rejoignez notre communauté.</p>
+            <div class="d-flex gap-3 justify-content-center">
+                {{ macros.btnPrimaryLink('list_posts', {}, 'Lire les articles', 'lg', 'book') }}
+                {% if is_granted('ROLE_USER') %}
+                    {{ macros.btnCreate('create_post', {}, 'Créer un article') }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

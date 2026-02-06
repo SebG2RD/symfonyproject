@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du commentaire{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <nav aria-label="Fil d'Ariane" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('admin_comments_index') }}">Commentaires</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Détails</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h2 class="h5 mb-0"><i class="bi bi-chat-left-text me-2"></i>Commentaire</h2>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Sur l'article : 
+                        <a href="{{ path('show_post', { id: comment.post.id }) }}" target="_blank">
+                            {{ comment.post.title }}
+                        </a>
+                    </h5>
+
+                    <div class="alert alert-light border">
+                        <p>{{ comment.content }}</p>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Auteur</h6>
+                            <p class="mb-1"><strong>{{ comment.author.firstName }} {{ comment.author.lastName }}</strong></p>
+                            <p class="mb-1"><small class="text-muted">{{ comment.author.email }}</small></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Date</h6>
+                            <p class="mb-1">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
+                            <h6 class="mt-3">Statut</h6>
+                            {% if comment.status == 'approved' %}
+                                <span class="badge bg-success">Approuve</span>
+                            {% elseif comment.status == 'rejected' %}
+                                <span class="badge bg-danger">Rejete</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">En attente</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex gap-2">
+                        {% if comment.status != 'approved' %}
+                            <form method="POST" action="{{ path('admin_comments_approve', { id: comment.id }) }}" onsubmit="return confirm('Approuver ce commentaire ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('approve_comment_' ~ comment.id) }}">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-lg me-2"></i>Approuver
+                                </button>
+                            </form>
+                        {% endif %}
+                        {% if comment.status != 'rejected' %}
+                            <form method="POST" action="{{ path('admin_comments_reject', { id: comment.id }) }}" onsubmit="return confirm('Rejeter ce commentaire ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('reject_comment_' ~ comment.id) }}">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-x-lg me-2"></i>Rejeter
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form method="POST" action="{{ path('admin_comments_delete', { id: comment.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i>Supprimer
+                            </button>
+                        </form>
+                        <a href="{{ path('admin_comments_index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Retour
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-newspaper me-2"></i>Article</h5>
+                </div>
+                <div class="card-body">
+                    <img src="{{ comment.post.picture }}" alt="{{ comment.post.title }}" class="img-fluid mb-3 rounded">
+                    <h6>{{ comment.post.title }}</h6>
+                    <p class="text-muted mb-2">Par <strong>{{ comment.post.author.firstName }} {{ comment.post.author.lastName }}</strong></p>
+                    <p class="text-muted small">Catégorie : <span class="badge bg-info">{{ comment.post.category.name }}</span></p>
+                    <a href="{{ path('show_post', { id: comment.post.id }) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                        Voir l'article
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

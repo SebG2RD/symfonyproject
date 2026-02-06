@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/_macros.html.twig' as macros %}
+
+{% block title %}Catégories{% endblock %}
+
+{% block body %}
+<nav aria-label="Fil d'Ariane" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Catégories</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+    <h1 class="page-title mb-0"><i class="bi bi-folder me-2"></i>Catégories</h1>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_category_new') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Nouvelle catégorie
+        </a>
+    {% endif %}
+</div>
+
+{% if categories|length > 0 %}
+    <div class="row g-4">
+        {% for category in categories %}
+            <div class="col-sm-6 col-lg-4">
+                <div class="card card-blog h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h2 class="card-title h5 fw-bold mb-2">
+                            <i class="bi bi-folder2 text-primary me-2"></i>{{ category.name }}
+                        </h2>
+                        <p class="card-text text-muted small flex-grow-1">
+                            {{ (category.description ?? '')|slice(0, 120) }}{% if (category.description|default(''))|length > 120 %}…{% endif %}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+                            <small class="text-secondary">{{ category.posts|length }} article(s)</small>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ path('app_category_show', { id: category.id }) }}" class="btn btn-outline-primary"><i class="bi bi-eye me-1"></i> Voir</a>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('app_category_edit', { id: category.id }) }}" class="btn btn-outline-warning"><i class="bi bi-pencil"></i></a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card card-blog">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-folder-x text-muted" style="font-size: 4rem;"></i>
+            <h3 class="h5 mt-3">Aucune catégorie</h3>
+            <p class="text-muted mb-4">Aucune catégorie n'a encore été créée.</p>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_category_new') }}" class="btn btn-primary">Créer la première catégorie</a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

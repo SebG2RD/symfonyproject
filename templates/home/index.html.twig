@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/_macros.html.twig' as macros %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+        <div class="card card-blog border-0 overflow-hidden">
+            <div class="card-body p-5 p-md-5 text-center">
+                <div class="mb-4">
+                    <span class="badge bg-primary rounded-pill px-3 py-2 mb-3">Bienvenue</span>
+                    <h1 class="display-5 fw-bold mb-3">Blog Symfony</h1>
+                    <p class="lead text-muted mb-0">Découvrez nos articles, partagez vos idées et participez aux discussions.</p>
+                </div>
+                <hr class="my-4 mx-auto" style="max-width: 8rem;">
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center flex-wrap">
+                    <a href="{{ path('list_posts') }}" class="btn btn-primary btn-lg px-4 rounded-pill">
+                        <i class="bi bi-newspaper me-2"></i>Voir les articles
+                    </a>
+                    {% if app.user %}
+                        <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">
+                            <i class="bi bi-box-arrow-right me-2"></i>Se déconnecter
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-outline-primary btn-lg px-4 rounded-pill">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                        </a>
+                        <a href="{{ path('app_register') }}" class="btn btn-success btn-lg px-4 rounded-pill">
+                            <i class="bi bi-person-plus me-2"></i>S'inscrire
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <h2 class="h5 fw-bold mb-3 mt-4">Derniers articles</h2>
+        <div class="row g-4 mt-1">
+            {% for post in latest_posts %}
+                <div class="col-md-4">
+                    <article class="card card-blog h-100">
+                        {% if post.picture is defined and post.picture %}
+                            <a href="{{ path('show_post', { id: post.id }) }}">
+                                <img src="{{ post.picture }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+                            </a>
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h3 class="card-title h5 fw-bold mb-2">
+                                <a href="{{ path('show_post', { id: post.id }) }}" class="text-dark text-decoration-none stretched-link">{{ post.title }}</a>
+                            </h3>
+                            <p class="card-text text-muted small flex-grow-1">{{ (post.content|slice(0, 100)) ~ (post.content|length > 100 ? '…' : '') }}</p>
+                            <a href="{{ path('show_post', { id: post.id }) }}" class="btn btn-sm btn-outline-primary align-self-start mt-2">Lire l'article</a>
+                        </div>
+                    </article>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="card card-blog">
+                        <div class="card-body text-center py-4">
+                            <i class="bi bi-newspaper text-muted" style="font-size: 2.5rem;"></i>
+                            <p class="text-muted mb-0 mt-2">Aucun article pour le moment.</p>
+                            <a href="{{ path('list_posts') }}" class="btn btn-sm btn-primary mt-3">Voir les articles</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

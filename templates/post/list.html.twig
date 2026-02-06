@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/_macros.html.twig' as macros %}
+
+{% block title %}Liste des articles{% endblock %}
+
+{% block body %}
+<nav aria-label="Fil d'Ariane" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Articles</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+    <h1 class="page-title mb-0"><i class="bi bi-newspaper me-2"></i>Tous les articles</h1>
+    {% if is_granted('ROLE_USER') %}
+        <a href="{{ path('create_post') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Nouvel article
+        </a>
+    {% endif %}
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+{% endfor %}
+
+{% if posts|length > 0 %}
+    <div class="row g-4">
+        {% for post in posts %}
+            <div class="col-sm-6 col-lg-4">
+                <article class="card card-blog h-100">
+                    {% if post.picture is defined and post.picture %}
+                        <a href="{{ path('show_post', { id: post.id }) }}" class="text-decoration-none">
+                            <img src="{{ post.picture }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+                        </a>
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h2 class="card-title h5 fw-bold mb-2">
+                            <a href="{{ path('show_post', { id: post.id }) }}" class="text-dark text-decoration-none stretched-link">{{ post.title }}</a>
+                        </h2>
+                        <p class="card-text text-muted small flex-grow-1">{{ (post.content|slice(0, 120)) ~ (post.content|length > 120 ? '…' : '') }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+                            <small class="text-secondary">#{{ post.id }}</small>
+                            <div class="d-flex align-items-center gap-1 flex-wrap">
+                                <a href="{{ path('show_post', { id: post.id }) }}" class="btn btn-outline-primary btn-sm" title="Voir"><i class="bi bi-eye"></i></a>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('edit_post', { id: post.id }) }}" class="btn btn-outline-warning btn-sm" title="Modifier"><i class="bi bi-pencil"></i></a>
+                                    <form action="{{ path('delete_post', { id: post.id }) }}" method="post" class="d-inline m-0" onsubmit="return confirm('Supprimer cet article ?');">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Supprimer"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        {% endfor %}
+    </div>
+    {% if totalPages > 1 %}
+        <nav class="mt-4" aria-label="Pagination des articles">
+            <ul class="pagination justify-content-center mb-0">
+                <li class="page-item {{ currentPage == 1 ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ path('list_posts', { page: currentPage - 1 }) }}" aria-label="Page precedente">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% for p in 1..totalPages %}
+                    <li class="page-item {{ p == currentPage ? 'active' : '' }}">
+                        <a class="page-link" href="{{ path('list_posts', { page: p }) }}">{{ p }}</a>
+                    </li>
+                {% endfor %}
+                <li class="page-item {{ currentPage == totalPages ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ path('list_posts', { page: currentPage + 1 }) }}" aria-label="Page suivante">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="card card-blog">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+            <h3 class="h5 mt-3">Aucun article</h3>
+            <p class="text-muted mb-4">Aucun article n'a encore été publié.</p>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('create_post') }}" class="btn btn-primary">Créer le premier article</a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

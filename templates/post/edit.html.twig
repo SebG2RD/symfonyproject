@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier : {{ post.title }}{% endblock %}
+
+{% block body %}
+<nav aria-label="Fil d'Ariane" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('list_posts') }}">Articles</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_post', { id: post.id }) }}">{{ post.title|length > 30 ? post.title|slice(0, 30) ~ '…' : post.title }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Modifier</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-blog">
+            <div class="card-header bg-warning text-dark py-3">
+                <h1 class="h5 fw-bold mb-0"><i class="bi bi-pencil-square me-2"></i>Modifier l'article</h1>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                    {{ form_row(form.title, { label: 'Titre', attr: { class: 'form-control', placeholder: 'Titre de l\'article' } }) }}
+                    {{ form_row(form.content, { label: 'Contenu', attr: { class: 'form-control', rows: 8, placeholder: 'Contenu de l\'article...' } }) }}
+                    {{ form_row(form.picture, { label: 'URL de l\'image', attr: { class: 'form-control', placeholder: 'https://exemple.com/image.jpg' } }) }}
+                    {{ form_row(form.category, { label: 'Catégorie', attr: { class: 'form-select' } }) }}
+                    <hr class="my-4">
+                    <div class="d-flex gap-2 flex-wrap align-items-center">
+                        {{ form_rest(form) }}
+                        <a href="{{ path('show_post', { id: post.id }) }}" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

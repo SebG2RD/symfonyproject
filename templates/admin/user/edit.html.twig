@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier : {{ user.email }}{% endblock %}
+
+{% block body %}
+<nav aria-label="Fil d'Ariane" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_users_index') }}">Utilisateurs</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Modifier {{ user.email }}</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-blog">
+            <div class="card-header bg-warning text-dark py-3">
+                <h1 class="h5 fw-bold mb-0"><i class="bi bi-pencil-square me-2"></i>Modifier l'utilisateur</h1>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                    {{ form_row(form.email, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                    {{ form_row(form.firstName, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                    {{ form_row(form.lastName, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                    <div class="mb-3">
+                        {{ form_label(form.roles, null, { label_attr: { class: 'form-label fw-semibold' } }) }}
+                        <div class="d-flex flex-wrap gap-3 pt-1">
+                            {% for child in form.roles %}
+                                <div class="form-check">
+                                    {{ form_widget(child, { attr: { class: 'form-check-input' } }) }}
+                                    {{ form_label(child, null, { label_attr: { class: 'form-check-label' } }) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {{ form_errors(form.roles) }}
+                    </div>
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {{ form_widget(form.isActive, { attr: { class: 'form-check-input' } }) }}
+                            {{ form_label(form.isActive, null, { label_attr: { class: 'form-check-label' } }) }}
+                        </div>
+                        {{ form_errors(form.isActive) }}
+                    </div>
+                    <hr class="my-4">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Enregistrer</button>
+                        <a href="{{ path('admin_users_index') }}" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

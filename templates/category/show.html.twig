@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/_macros.html.twig' as macros %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block body %}
+<nav aria-label="Fil d'Ariane" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('app_category_index') }}">Catégories</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+    <h1 class="page-title mb-0"><i class="bi bi-folder2 me-2"></i>{{ category.name }}</h1>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_category_edit', { id: category.id }) }}" class="btn btn-outline-warning"><i class="bi bi-pencil me-1"></i> Modifier</a>
+    {% endif %}
+</div>
+
+{% if category.description %}
+    <div class="card card-blog mb-4">
+        <div class="card-body">
+            <h2 class="h6 fw-bold text-muted mb-2">Description</h2>
+            <p class="mb-0">{{ category.description }}</p>
+        </div>
+    </div>
+{% endif %}
+
+<h2 class="h5 fw-bold mb-3"><i class="bi bi-newspaper me-2"></i>Articles dans cette catégorie <span class="badge bg-secondary rounded-pill">{{ category.posts|length }}</span></h2>
+
+{% if category.posts|length > 0 %}
+    <div class="row g-4">
+        {% for post in category.posts %}
+            <div class="col-sm-6 col-lg-4">
+                <article class="card card-blog h-100">
+                    {% if post.picture is defined and post.picture %}
+                        <a href="{{ path('show_post', { id: post.id }) }}">
+                            <img src="{{ post.picture }}" class="card-img-top" alt="{{ post.title }}" style="height: 180px; object-fit: cover;">
+                        </a>
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                            <i class="bi bi-image text-muted" style="font-size: 2.5rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="card-title h6 fw-bold mb-2">
+                            <a href="{{ path('show_post', { id: post.id }) }}" class="text-dark text-decoration-none stretched-link">{{ post.title }}</a>
+                        </h3>
+                        <p class="card-text text-muted small flex-grow-1">{{ (post.content|slice(0, 80)) ~ (post.content|length > 80 ? '…' : '') }}</p>
+                        <a href="{{ path('show_post', { id: post.id }) }}" class="btn btn-sm btn-outline-primary align-self-start">Lire l'article</a>
+                    </div>
+                </article>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card card-blog">
+        <div class="card-body text-center py-4">
+            <i class="bi bi-inbox text-muted" style="font-size: 2.5rem;"></i>
+            <p class="text-muted mb-0 mt-2">Aucun article dans cette catégorie.</p>
+        </div>
+    </div>
+{% endif %}
+
+<div class="mt-4">
+    <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Retour aux catégories</a>
+</div>
+{% endblock %}
