@@ -27,8 +27,11 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($userRepository->findOneBy(['email' => $user->getEmail()])) {
-                $form->get('email')->addError(new FormError('Un compte existe deja avec cet e-mail.'));
+            // Récupérer l'email depuis le formulaire (plus fiable que depuis l'entité)
+            $email = $form->get('email')->getData();
+            if ($email && $userRepository->findOneBy(['email' => $email])) {
+                $form->get('email')->addError(new FormError('Cette adresse e-mail est déjà utilisée.'));
+                $this->addFlash('error', 'Cette adresse e-mail est déjà utilisée par un autre compte.');
             }
         }
 
